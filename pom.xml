@@ -26,21 +26,27 @@
 	</repositories>
 
 	<dependencies>
+
+		<!-- Spigot 1.8.8-->
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version> <!-- or the latest one-->
+			<version>1.8.8-R0.1-SNAPSHOT</version> 
 		</dependency>
+
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.12</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- LunarClientAPI -->
 		<dependency>
-			<groupId>net.mineaus.lunar.LunarClientPlugin</groupId>
-			<artifactId>LunarClientAPI</artifactId>
-			<version>304042b</version>
+			<groupId>com.lunarclient.bukkitapi.LunarClientAPI</groupId>
+			<artifactId>LunarClient-API</artifactId>
+			<version>'1.0'</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/LunarClientAPI.jar</systemPath>
 		</dependency>

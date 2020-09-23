@@ -1,10 +1,10 @@
 package dev.risas.lunarutils.commands;
 
 import dev.risas.lunarutils.files.WaypointFile;
+import dev.risas.lunarutils.manager.CheckManager;
 import dev.risas.lunarutils.manager.StaffModulesManager;
 import dev.risas.lunarutils.manager.WaypointManager;
 import dev.risas.lunarutils.utilities.CC;
-import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,7 +17,6 @@ public class LunarCommand implements CommandExecutor {
         Bukkit.getPluginCommand("lunar").setExecutor(this);
     }
 
-    @SneakyThrows
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -37,9 +36,11 @@ public class LunarCommand implements CommandExecutor {
             this.getUtilsUsage(player, label);
             return true;
         }
-
+        
         if (args[0].equalsIgnoreCase("staffmodules")) {
-            StaffModulesManager.setStaffModules(player);
+        	
+        	StaffModulesManager.setStaffModules(player);
+        	player.sendMessage(CC.translate("&7&oStaff Modules only work on the 1.7.10 Version of Lunar Client."));
         }
         else if (args[0].equalsIgnoreCase("waypoint")) {
 
@@ -55,12 +56,12 @@ public class LunarCommand implements CommandExecutor {
                     return true;
                 }
 
-                String waypoint = args[2];
-
-                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + waypoint) != null) {
-                    player.sendMessage(CC.translate("&c" + waypoint + " Waypoint is already created."));
+                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + args[2]) != null) {
+                    player.sendMessage(CC.translate("&c" + args[2] + " Waypoint is already created."));
                     return true;
                 }
+                
+                String waypoint = args[2];
 
                 WaypointManager.createWaypointFile(waypoint, player);
                 WaypointManager.createPlayersWaypointLunar(waypoint);
@@ -74,15 +75,15 @@ public class LunarCommand implements CommandExecutor {
                     return true;
                 }
 
-                String waypoint = args[2];
-
-                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + waypoint) == null) {
-                    player.sendMessage(CC.translate("&c" + waypoint + " Waypoint is already deleted."));
+                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + args[2]) == null) {
+                    player.sendMessage(CC.translate("&c" + args[2] + " Waypoint is already deleted."));
                     return true;
                 }
-
-                WaypointManager.deleteWaypointFile(waypoint);
+                
+                String waypoint = args[2];
+                
                 WaypointManager.deleteWaypointLunar(waypoint);
+                WaypointManager.deleteWaypointFile(waypoint);
 
                 player.sendMessage(CC.translate("&b" + waypoint + " Waypoint has been delete."));
             }
@@ -92,6 +93,25 @@ public class LunarCommand implements CommandExecutor {
             else {
                 this.getWaypointUsage(player, label);
             }
+        }
+        else if (args[0].equalsIgnoreCase("check")) {
+        	
+        	if (args.length < 2) {
+                this.getCheckUsage(player, label);
+                return true;
+            }
+        	
+        	Player target = Bukkit.getPlayer(args[1]);
+        	
+        	if (target == null) {
+        		player.sendMessage(CC.translate("&c" + args[1] + " is not connected to the server."));
+        		return true;
+        	}
+        	
+        	CheckManager.LCAC(player, target);
+        }
+        else if (args[0].equalsIgnoreCase("online")) {
+        	CheckManager.onlinePlayersLC(player);
         }
         else {
             this.getUtilsUsage(player, label);
@@ -105,6 +125,8 @@ public class LunarCommand implements CommandExecutor {
         player.sendMessage(CC.translate(""));
         player.sendMessage(CC.translate("&b/" + label + " staffmodules"));
         player.sendMessage(CC.translate("&b/" + label + " waypoint"));
+        player.sendMessage(CC.translate("&b/" + label + " check"));
+        player.sendMessage(CC.translate("&b/" + label + " online"));
         player.sendMessage(CC.translate("&3&m--------------------------------"));
     }
 
@@ -115,6 +137,14 @@ public class LunarCommand implements CommandExecutor {
         player.sendMessage(CC.translate("&b/" + label + " waypoint create <name>"));
         player.sendMessage(CC.translate("&b/" + label + " waypoint delete <name>"));
         player.sendMessage(CC.translate("&b/" + label + " waypoint list"));
+        player.sendMessage(CC.translate("&3&m--------------------------------"));
+    }
+    
+    private void getCheckUsage(Player player, String label) {
+        player.sendMessage(CC.translate("&3&m--------------------------------"));
+        player.sendMessage(CC.translate("&b&lLunar Client Check"));
+        player.sendMessage(CC.translate(""));
+        player.sendMessage(CC.translate("&b/" + label + " check <player>"));
         player.sendMessage(CC.translate("&3&m--------------------------------"));
     }
 }

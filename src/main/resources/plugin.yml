@@ -1,11 +1,11 @@
 main: dev.risas.lunarutils.LunarUtils
 name: LunarUtils
-version: 0.0.1-SNAPSHOT
+version: 1.0.0-SNAPSHOT
 author: Risas
 commands:
   lunar:
     description: Main command of Lunar Utils
-    aliases: [lunarutils, lunarclient, lunarclientutils, lcu, lu]
+    aliases: [lunarutils, lunarclient, lunarclientutils, lcu, lu, lc]
   file:
     description: Reload all files
     aliases: [files]

@@ -24,7 +24,7 @@
     <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.8-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.18.12" level="project" />
     <orderEntry type="module-library">
-      <library name="Maven: net.mineaus.lunar.LunarClientPlugin:LunarClientAPI:304042b">
+      <library name="Maven: com.lunarclient.bukkitapi.LunarClientAPI:LunarClient-API:'1.0'">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/LunarClientAPI.jar!/" />
         </CLASSES>

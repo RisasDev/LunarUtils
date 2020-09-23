@@ -1,12 +1,16 @@
 package dev.risas.lunarutils.manager;
 
+import dev.risas.lunarutils.LunarUtils;
 import dev.risas.lunarutils.files.WaypointFile;
 import dev.risas.lunarutils.utilities.CC;
-import net.mineaus.lunar.api.LunarClientAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.lunarclient.bukkitapi.LunarClientAPI;
+import com.lunarclient.bukkitapi.object.LCWaypoint;
 
 import java.util.Set;
 
@@ -23,18 +27,24 @@ public class WaypointManager {
 
     public static void createPlayersWaypointLunar(String waypoint) {
         for (Player online : Bukkit.getOnlinePlayers()) {
-            if (LunarClientAPI.INSTANCE().isAuthenticated(online)) {
-                LunarClientAPI.INSTANCE().getWaypointManager().createWaypoint(waypoint, getWaypointLocation(waypoint), 0, 255, 250, true);
-                LunarClientAPI.INSTANCE().getWaypointManager().reloadWaypoints(online, true);
+        	
+        	if (LunarClientAPI.getInstance().isRunningLunarClient(online)) {
+        		LunarClientAPI.getInstance().sendWaypoint(online, getWaypoint(waypoint));
             }
         }
     }
 
     public static void createPlayerWaypointLunar(Player player, String waypoint) {
-        if (LunarClientAPI.INSTANCE().isAuthenticated(player)) {
-            LunarClientAPI.INSTANCE().getWaypointManager().createWaypoint(waypoint, getWaypointLocation(waypoint), 0, 255, 250, true);
-            LunarClientAPI.INSTANCE().getWaypointManager().reloadWaypoints(player, true);
-        }
+    	new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				if (LunarClientAPI.getInstance().isRunningLunarClient(player)) {
+		    		LunarClientAPI.getInstance().sendWaypoint(player, getWaypoint(waypoint));
+		        }
+				
+			}
+		}.runTaskLater(LunarUtils.getInstance(), 20L);
     }
 
     public static void deleteWaypointFile(String waypoint) {
@@ -45,11 +55,15 @@ public class WaypointManager {
 
     public static void deleteWaypointLunar(String waypoint) {
         for (Player online : Bukkit.getOnlinePlayers()) {
-            if (LunarClientAPI.INSTANCE().isAuthenticated(online)) {
-                LunarClientAPI.INSTANCE().getWaypointManager().deleteWaypoint(waypoint, online.getUniqueId());
-                LunarClientAPI.INSTANCE().getWaypointManager().reloadWaypoints(online, true);
+        	
+        	if (LunarClientAPI.getInstance().isRunningLunarClient(online)) {
+            	LunarClientAPI.getInstance().removeWaypoint(online, getWaypoint(waypoint));
             }
         }
+    }
+    
+    public static LCWaypoint getWaypoint(String name) {
+		return new LCWaypoint(name, getWaypointLocation(name), 255, true, true);
     }
 
     public static World getWaypointWorld(String waypoint) {
