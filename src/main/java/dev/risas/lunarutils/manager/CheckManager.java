@@ -25,11 +25,17 @@ public class CheckManager {
 		player.sendMessage(CC.translate("&3&m--------------------------------"));
 		player.sendMessage(CC.translate("&b&lLunar Client Online"));
 		player.sendMessage(CC.translate(""));
-		
+
 		for (Player online : Bukkit.getOnlinePlayers()) {
-			
+
 			if (LunarClientAPI.getInstance().isRunningLunarClient(online)) {
-				player.sendMessage(CC.translate(" &3\u2746 &b" + online.getName()));
+
+				if (Bukkit.getOnlinePlayers().size() < 1) {
+					player.sendMessage(CC.translate("&bThere is no player with Lunar Client online."));
+				}
+				else {
+					player.sendMessage(CC.translate(" &3\u2746 &b" + online.getName()));
+				}
 			}
 		}
 		

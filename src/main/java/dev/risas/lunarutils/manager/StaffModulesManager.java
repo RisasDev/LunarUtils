@@ -11,7 +11,7 @@ import com.lunarclient.bukkitapi.LunarClientAPI;
 
 public class StaffModulesManager {
 
-    public static List<String> players = new ArrayList<>();
+    public static List<String> players;
     
     static {
     	players = new ArrayList<>();
