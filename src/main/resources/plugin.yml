@@ -1,7 +1,9 @@
 main: dev.risas.lunarutils.LunarUtils
+version: 1.0.1-SNAPSHOT
 name: LunarUtils
-version: 1.0.0-SNAPSHOT
 author: Risas
+website: https://pandamc.us
+
 commands:
   lunar:
     description: Main command of Lunar Utils
@@ -9,3 +11,17 @@ commands:
   file:
     description: Reload all files
     aliases: [files]
+
+permissions:
+  lunarutils.*:
+    description: All the Plugin Permissions
+    default: op
+    children:
+      lunarutils.command.file: true
+      lunarutils.command.lunar: true
+  lunarutils.command.file:
+    description: File Command
+    default: op
+  lunarutils.command.lunar:
+    description: Lunar Command
+    default: op
