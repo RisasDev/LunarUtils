@@ -16,11 +16,20 @@ import java.util.Set;
 
 public class WaypointManager {
 
+    public static String waypointName;
+    public static int waypointColor;
+
+    public WaypointManager() {
+        waypointName = null;
+        waypointColor = 0;
+    }
+
     public static void createWaypointFile(String waypoint, Player player) {
         WaypointFile.getConfig().set("WAYPOINTS." + waypoint + ".WORLD", player.getWorld().getName());
         WaypointFile.getConfig().set("WAYPOINTS." + waypoint + ".X", player.getLocation().getBlockX());
         WaypointFile.getConfig().set("WAYPOINTS." + waypoint + ".Y", player.getLocation().getBlockY());
         WaypointFile.getConfig().set("WAYPOINTS." + waypoint + ".Z", player.getLocation().getBlockZ());
+        WaypointFile.getConfig().set("WAYPOINTS." + waypoint + ".COLOR", waypointColor);
         WaypointFile.getConfig().save();
         WaypointFile.getConfig().reload();
     }
@@ -39,10 +48,9 @@ public class WaypointManager {
 			
 			@Override
 			public void run() {
-				if (LunarClientAPI.getInstance().isRunningLunarClient(player)) {
-		    		LunarClientAPI.getInstance().sendWaypoint(player, getWaypoint(waypoint));
-		        }
-				
+                if (LunarClientAPI.getInstance().isRunningLunarClient(player)) {
+                    LunarClientAPI.getInstance().sendWaypoint(player, getWaypoint(waypoint));
+                }
 			}
 		}.runTaskLater(LunarUtils.getInstance(), 20L);
     }
@@ -61,9 +69,25 @@ public class WaypointManager {
             }
         }
     }
+
+    public static String getWaypointName() {
+        return waypointName;
+    }
+
+    public static void setWaypointName(String name) {
+        waypointName = name;
+    }
+
+    public static int getWaypointColor(String waypoint) {
+        return WaypointFile.getConfig().getInt("WAYPOINTS." + waypoint + ".COLOR");
+    }
+
+    public static void setWaypointColor(int color) {
+        waypointColor = color;
+    }
     
     public static LCWaypoint getWaypoint(String name) {
-		return new LCWaypoint(name, getWaypointLocation(name), 255, true, true);
+		return new LCWaypoint(name, getWaypointLocation(name), getWaypointColor(name), true, true);
     }
 
     public static World getWaypointWorld(String waypoint) {
@@ -109,7 +133,7 @@ public class WaypointManager {
         }
         else {
             for (String waypoints : getWaypoints()) {
-                player.sendMessage(CC.translate(" &3\u2746 &b" + waypoints + " Waypoint"));
+                player.sendMessage(CC.translate(" &3\u2746 &b" + waypoints + "Waypoint"));
             }
         }
 

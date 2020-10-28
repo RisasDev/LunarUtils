@@ -1,6 +1,6 @@
 main: dev.risas.lunarutils.LunarUtils
 name: LunarUtils
-version: 1.0.0-SNAPSHOT
+version: ${project.version}
 author: Risas
 commands:
   lunar:

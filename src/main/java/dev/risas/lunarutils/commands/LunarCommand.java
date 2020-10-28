@@ -2,6 +2,7 @@ package dev.risas.lunarutils.commands;
 
 import dev.risas.lunarutils.files.WaypointFile;
 import dev.risas.lunarutils.manager.CheckManager;
+import dev.risas.lunarutils.manager.InventoryManager;
 import dev.risas.lunarutils.manager.StaffModulesManager;
 import dev.risas.lunarutils.manager.WaypointManager;
 import dev.risas.lunarutils.utilities.CC;
@@ -56,17 +57,20 @@ public class LunarCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + args[2]) != null) {
-                    player.sendMessage(CC.translate("&c" + args[2] + " Waypoint is already created."));
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 2; i < args.length; ++i) {
+                    sb.append(args[i]).append(' ');
+                }
+
+                WaypointManager.setWaypointName(sb.toString());
+
+                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + WaypointManager.getWaypointName()) != null) {
+                    player.sendMessage(CC.translate("&c" + WaypointManager.getWaypointName() + "Waypoint is already created."));
                     return true;
                 }
-                
-                String waypoint = args[2];
 
-                WaypointManager.createWaypointFile(waypoint, player);
-                WaypointManager.createPlayersWaypointLunar(waypoint);
-
-                player.sendMessage(CC.translate("&b" + waypoint + " Waypoint has been created."));
+                player.openInventory(InventoryManager.getWaypoint());
             }
             else if (args[1].equalsIgnoreCase("delete")) {
 
@@ -75,17 +79,23 @@ public class LunarCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + args[2]) == null) {
-                    player.sendMessage(CC.translate("&c" + args[2] + " Waypoint is already deleted."));
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 2; i < args.length; ++i) {
+                    sb.append(args[i]).append(" ");
+                }
+
+                WaypointManager.setWaypointName(sb.toString());
+
+                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + WaypointManager.getWaypointName()) == null) {
+                    player.sendMessage(CC.translate("&c" + WaypointManager.getWaypointName() + "Waypoint is already deleted."));
                     return true;
                 }
                 
-                String waypoint = args[2];
-                
-                WaypointManager.deleteWaypointLunar(waypoint);
-                WaypointManager.deleteWaypointFile(waypoint);
+                WaypointManager.deleteWaypointLunar(WaypointManager.getWaypointName());
+                WaypointManager.deleteWaypointFile(WaypointManager.getWaypointName());
 
-                player.sendMessage(CC.translate("&b" + waypoint + " Waypoint has been delete."));
+                player.sendMessage(CC.translate("&b" + WaypointManager.getWaypointName() + "Waypoint has been delete."));
             }
             else if (args[1].equalsIgnoreCase("list")) {
                 WaypointManager.showWaypoints(player);
