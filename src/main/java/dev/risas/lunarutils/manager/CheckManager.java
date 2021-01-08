@@ -9,8 +9,7 @@ import dev.risas.lunarutils.utilities.CC;
 
 public class CheckManager {
 	
-	public static void LCAC(Player player, Player target) {
-		
+	public void antiCheat(Player player, Player target) {
 		if (LunarClientAPI.getInstance().isRunningLunarClient(target)) {
 			player.sendMessage(CC.translate("&b" + target.getName() + " is using LunarClient with AntiCheat " 
 				+ (LunarClientAPI.getInstance().isRunningAntiCheat(target) ? "&aON" : "&cOFF") + "&b."));
@@ -20,25 +19,17 @@ public class CheckManager {
 		}
 	}
 	
-	public static void onlinePlayersLC(Player player) {
-		
+	public void lunarPlayers(Player player) {
 		player.sendMessage(CC.translate("&3&m--------------------------------"));
 		player.sendMessage(CC.translate("&b&lLunar Client Online"));
 		player.sendMessage(CC.translate(""));
 
-		for (Player online : Bukkit.getOnlinePlayers()) {
-
+		Bukkit.getOnlinePlayers().forEach(online -> {
 			if (LunarClientAPI.getInstance().isRunningLunarClient(online)) {
-
-				if (Bukkit.getOnlinePlayers().size() < 1) {
-					player.sendMessage(CC.translate("&bThere is no player with Lunar Client online."));
-				}
-				else {
-					player.sendMessage(CC.translate(" &3\u2746 &b" + online.getName()));
-				}
+				player.sendMessage(CC.translate(" &3\u2746 &b" + online.getName()));
 			}
-		}
-		
+		});
+
 		player.sendMessage(CC.translate(""));
 		player.sendMessage(CC.translate("&3&m--------------------------------"));
 	}

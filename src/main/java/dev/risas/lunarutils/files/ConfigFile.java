@@ -6,26 +6,26 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
-public class WaypointFile extends YamlConfiguration {
+public class ConfigFile extends YamlConfiguration {
 
-    private static WaypointFile config;
+    private static ConfigFile config;
     private Plugin plugin;
     private File configFile;
 
-    public static WaypointFile getConfig() {
-        if (WaypointFile.config == null) {
-            WaypointFile.config = new WaypointFile();
+    public static ConfigFile getConfig() {
+        if (ConfigFile.config == null) {
+            ConfigFile.config = new ConfigFile();
         }
-        return WaypointFile.config;
+        return ConfigFile.config;
     }
 
     private Plugin main() {
         return LunarUtils.getInstance();
     }
 
-    public WaypointFile() {
+    public ConfigFile() {
         this.plugin = this.main();
-        this.configFile = new File(this.plugin.getDataFolder(), "waypoints.yml");
+        this.configFile = new File(this.plugin.getDataFolder(), "config.yml");
         this.saveDefault();
         this.reload();
     }
@@ -49,7 +49,7 @@ public class WaypointFile extends YamlConfiguration {
     }
 
     public void saveDefault() {
-        this.plugin.saveResource("waypoints.yml", false);
+        this.plugin.saveResource("config.yml", false);
     }
 
     public void saveAll() {

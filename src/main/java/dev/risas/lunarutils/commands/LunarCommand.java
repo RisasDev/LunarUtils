@@ -1,142 +1,151 @@
 package dev.risas.lunarutils.commands;
 
+import dev.risas.lunarutils.LunarUtils;
+import dev.risas.lunarutils.files.ConfigFile;
 import dev.risas.lunarutils.files.WaypointFile;
-import dev.risas.lunarutils.manager.CheckManager;
-import dev.risas.lunarutils.manager.InventoryManager;
-import dev.risas.lunarutils.manager.StaffModulesManager;
-import dev.risas.lunarutils.manager.WaypointManager;
+import dev.risas.lunarutils.manager.menu.waypoint.WaypointMenu;
 import dev.risas.lunarutils.utilities.CC;
+import dev.risas.lunarutils.utilities.commands.BaseCommand;
+import dev.risas.lunarutils.utilities.commands.Command;
+import dev.risas.lunarutils.utilities.commands.CommandArgs;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LunarCommand implements CommandExecutor {
+public class LunarCommand extends BaseCommand {
 
-    public LunarCommand() {
-        Bukkit.getPluginCommand("lunar").setExecutor(this);
-    }
+    private final LunarUtils plugin = LunarUtils.getInstance();
 
+    @Command(name = "lunar", permission = "lunarutils.lunar", aliases = {"lunarutils", "lc"})
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(CC.translate("&cNo console."));
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-        if (!player.hasPermission("lunarutils.command.lunar")) {
-            sender.sendMessage(CC.translate("&cYou don't have permission to execute this command."));
-            return true;
-        }
+    public void onCommand(CommandArgs command) {
+        Player player = command.getPlayer();
+        String label = command.getLabel();
+        String[] args = command.getArgs();
 
         if (args.length < 1) {
-            this.getUtilsUsage(player, label);
-            return true;
+            this.getUsage(player, label);
+            return;
         }
-        
-        if (args[0].equalsIgnoreCase("staffmodules")) {
-        	
-        	StaffModulesManager.setStaffModules(player);
-        	player.sendMessage(CC.translate("&7&oStaff Modules only work on the 1.7.10 Version of Lunar Client."));
-        }
-        else if (args[0].equalsIgnoreCase("waypoint")) {
 
-            if (args.length < 2) {
-                this.getWaypointUsage(player, label);
-                return true;
-            }
-
-            if (args[1].equalsIgnoreCase("create")) {
-
-                if (args.length < 3) {
-                    player.sendMessage(CC.translate("&cUsage: /" + label + " waypoint create <name>"));
-                    return true;
+        switch (args[0].toLowerCase()) {
+            case "waypoint":
+                if (!player.hasPermission("lunarutils.lunar.waypoint")) {
+                    player.sendMessage(CC.translate("&cNo permission."));
+                    return;
                 }
 
-                StringBuilder sb = new StringBuilder();
-
-                for (int i = 2; i < args.length; ++i) {
-                    sb.append(args[i]).append(' ');
+                if (args.length < 2) {
+                    this.getWaypointUsage(player, label);
+                    return;
                 }
 
-                WaypointManager.setWaypointName(sb.toString());
+                switch (args[1].toLowerCase()) {
+                    case "create":
+                        if (args.length < 3) {
+                            player.sendMessage(CC.translate("&cUsage: /" + label + " waypoint create <name>"));
+                            return;
+                        }
 
-                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + WaypointManager.getWaypointName()) != null) {
-                    player.sendMessage(CC.translate("&c" + WaypointManager.getWaypointName() + "Waypoint is already created."));
-                    return true;
+                        StringBuilder sb = new StringBuilder();
+
+                        for (int i = 2; i < args.length; ++i) {
+                            sb.append(args[i]).append(' ');
+                        }
+
+                        this.plugin.getWaypointManager().setName(sb.toString());
+
+                        if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + this.plugin.getWaypointManager().getName()) != null) {
+                            player.sendMessage(CC.translate("&c" + this.plugin.getWaypointManager().getName() + "Waypoint is already created."));
+                            return;
+                        }
+
+                        WaypointMenu.getWaypoint(player);
+                        break;
+                    case "delete":
+                        if (args.length < 3) {
+                            player.sendMessage(CC.translate("&cUsage: /" + label + " waypoint delete <name>"));
+                            return;
+                        }
+
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        for (int i = 2; i < args.length; ++i) {
+                            stringBuilder.append(args[i]).append(" ");
+                        }
+
+                        this.plugin.getWaypointManager().setName(stringBuilder.toString());
+
+                        String waypointName = this.plugin.getWaypointManager().getName();
+
+                        if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + waypointName) == null) {
+                            player.sendMessage(CC.translate("&c" + waypointName + "Waypoint is already deleted."));
+                            return;
+                        }
+
+                        this.plugin.getWaypointManager().deleteWaypointOnline(waypointName);
+                        this.plugin.getWaypointManager().deleteWaypointFile(waypointName);
+                        player.sendMessage(CC.translate("&a" + waypointName + "Waypoint has been delete."));
+                        break;
+                    case "list":
+                        this.plugin.getWaypointManager().availablesWaypoints(player);
+                        break;
+                    default:
+                        this.getWaypointUsage(player, label);
+                        break;
+                }
+                break;
+            case "check":
+                if (!player.hasPermission("lunarutils.lunar.check")) {
+                    player.sendMessage(CC.translate("&cNo permission."));
+                    return;
                 }
 
-                player.openInventory(InventoryManager.getWaypoint());
-            }
-            else if (args[1].equalsIgnoreCase("delete")) {
-
-                if (args.length < 3) {
-                    player.sendMessage(CC.translate("&cUsage: /" + label + " waypoint delete <name>"));
-                    return true;
+                if (args.length < 2) {
+                    this.getCheckUsage(player, label);
+                    return;
                 }
 
-                StringBuilder sb = new StringBuilder();
+                Player target = Bukkit.getPlayer(args[1]);
 
-                for (int i = 2; i < args.length; ++i) {
-                    sb.append(args[i]).append(" ");
+                if (target == null) {
+                    player.sendMessage(CC.translate("&c" + args[1] + " is not connected to the server."));
+                    return;
                 }
 
-                WaypointManager.setWaypointName(sb.toString());
-
-                if (WaypointFile.getConfig().getConfigurationSection("WAYPOINTS." + WaypointManager.getWaypointName()) == null) {
-                    player.sendMessage(CC.translate("&c" + WaypointManager.getWaypointName() + "Waypoint is already deleted."));
-                    return true;
+                this.plugin.getCheckManager().antiCheat(player, target);
+                break;
+            case "online":
+                if (!player.hasPermission("lunarutils.lunar.online")) {
+                    player.sendMessage(CC.translate("&cNo permission."));
+                    return;
                 }
-                
-                WaypointManager.deleteWaypointLunar(WaypointManager.getWaypointName());
-                WaypointManager.deleteWaypointFile(WaypointManager.getWaypointName());
 
-                player.sendMessage(CC.translate("&b" + WaypointManager.getWaypointName() + "Waypoint has been delete."));
-            }
-            else if (args[1].equalsIgnoreCase("list")) {
-                WaypointManager.showWaypoints(player);
-            }
-            else {
-                this.getWaypointUsage(player, label);
-            }
+                this.plugin.getCheckManager().lunarPlayers(player);
+                break;
+            case "reload":
+                if (!player.hasPermission("lunarutils.lunar.reload")) {
+                    player.sendMessage(CC.translate("&cNo permission."));
+                    return;
+                }
+
+                ConfigFile.getConfig().reload();
+                WaypointFile.getConfig().reload();
+                player.sendMessage(CC.translate("&aAll files has been reloaded."));
+                break;
+            default:
+                this.getUsage(player, label);
+                break;
         }
-        else if (args[0].equalsIgnoreCase("check")) {
-        	
-        	if (args.length < 2) {
-                this.getCheckUsage(player, label);
-                return true;
-            }
-        	
-        	Player target = Bukkit.getPlayer(args[1]);
-        	
-        	if (target == null) {
-        		player.sendMessage(CC.translate("&c" + args[1] + " is not connected to the server."));
-        		return true;
-        	}
-        	
-        	CheckManager.LCAC(player, target);
-        }
-        else if (args[0].equalsIgnoreCase("online")) {
-        	CheckManager.onlinePlayersLC(player);
-        }
-        else {
-            this.getUtilsUsage(player, label);
-        }
-        return true;
     }
 
-    private void getUtilsUsage(Player player, String label) {
+    private void getUsage(Player player, String label) {
         player.sendMessage(CC.translate("&3&m--------------------------------"));
         player.sendMessage(CC.translate("&b&lLunar Client Utils"));
         player.sendMessage(CC.translate(""));
-        player.sendMessage(CC.translate("&b/" + label + " staffmodules"));
         player.sendMessage(CC.translate("&b/" + label + " waypoint"));
         player.sendMessage(CC.translate("&b/" + label + " check"));
         player.sendMessage(CC.translate("&b/" + label + " online"));
+        player.sendMessage(CC.translate("&b/" + label + " reload"));
         player.sendMessage(CC.translate("&3&m--------------------------------"));
     }
 

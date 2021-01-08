@@ -1,0 +1,17 @@
+# PlaceholderAPI Compatibility.
+# All delay in seconds.
+LUNAR-TITLE:
+  ENABLE: true
+  TITLE: "&b&lMy Minecraft Server"
+  SUBTITLE: "&bWelcome, &f<player> &bto my server."
+  DELAY: 5
+
+LUNAR-COOLDOWNS:
+  ENDERPEARL:
+    ENABLE: true
+    DELAY: 16
+    ICON: "ENDER_PEARL"
+  GRAPPLE:
+    ENABLE: true
+    DELAY: 10
+    ICON: "GOLDEN_APPLE"

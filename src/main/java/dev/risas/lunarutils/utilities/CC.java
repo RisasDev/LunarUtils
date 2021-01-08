@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 
 public class CC {
 
-    public static String translate(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
+    public static String translate(String message) {
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static List<String> translate(List<String> lore) {
-        return lore.stream().map(CC::translate).collect(Collectors.toList());
+    public static List<String> translate(List<String> message) {
+        return message.stream().map(CC::translate).collect(Collectors.toList());
     }
 }

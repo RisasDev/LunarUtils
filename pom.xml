@@ -6,7 +6,7 @@
 
 	<groupId>dev.risas.lunarutils</groupId>
 	<artifactId>LunarUtils</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<name>LunarUtils</name>
 
 	<properties>
@@ -31,7 +31,8 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version> 
+			<version>1.8.8-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Lombok -->
@@ -46,15 +47,24 @@
 		<dependency>
 			<groupId>com.lunarclient.bukkitapi.LunarClientAPI</groupId>
 			<artifactId>LunarClient-API</artifactId>
-			<version>'1.0'</version>
+			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/LunarClientAPI.jar</systemPath>
+		</dependency>
+
+		<!-- PlaceholderAPI -->
+		<dependency>
+			<groupId>placeholderapi</groupId>
+			<artifactId>PlaceholderAPI</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/PlaceholderAPI.jar</systemPath>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<defaultGoal>clean install</defaultGoal>
-		<finalName>LunarUtils</finalName>
+		<finalName>LunarUtils-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

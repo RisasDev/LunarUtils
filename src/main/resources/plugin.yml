@@ -2,10 +2,3 @@ main: dev.risas.lunarutils.LunarUtils
 name: LunarUtils
 version: ${project.version}
 author: Risas
-commands:
-  lunar:
-    description: Main command of Lunar Utils
-    aliases: [lunarutils, lunarclient, lunarclientutils, lcu, lu, lc]
-  file:
-    description: Reload all files
-    aliases: [files]
